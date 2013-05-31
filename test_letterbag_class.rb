@@ -56,7 +56,7 @@ class LetterBag
   end
 
   def total
-    return @letters.length
+    @letters.length
   end
 
 end
