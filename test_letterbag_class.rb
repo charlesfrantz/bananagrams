@@ -27,7 +27,7 @@ $letter_pool.shuffle!
 #If an object of player's letters is initialized, the call should take the form obj = LetterBag.new($letter_pool.pop(21))
 #This will remove 21 letters from $letter_pool AND provide those same 21 letters to the player's LetterBag object
 class LetterBag 
-  attr_accessor :letters#, :letters_hash
+  attr_accessor :letters, :letters_hash
 
   #When the LetterBag class is initialized, it creates a hash that stores the number of each letter that each player has
   def initialize(letters)
@@ -55,12 +55,8 @@ class LetterBag
     end
   end
 
-  def hash
-    return @letter_hash
-  end
-
   def total
-    return @letters.length
+    @letters.length
   end
 
 end
