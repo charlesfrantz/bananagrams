@@ -19,7 +19,7 @@ end
 #There is a "" at the end of $letter_pool, so we'll pop it off
 $letter_pool.pop
 #The letter_pool is shuffled so that players will get random letters from the pool
-$letter_pool = $letter_pool.shuffle
+$letter_pool.shuffle!
 
 
 
