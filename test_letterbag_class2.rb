@@ -23,7 +23,7 @@ $letter_pool.pop
 
 
 
-#The LetterBag class is used to keep track of how many letters each player has
+#The LetterBag class is used to keep track of how many letters each player has.  It takes an array as input.
 #If an object of player's letters is initialized, the call should take the form obj = LetterBag.new($letter_pool.pop(21))
 #This will remove 21 letters from $letter_pool AND provide those same 21 letters to the player's LetterBag object
 class LetterBag 
@@ -32,13 +32,16 @@ class LetterBag
   #When the LetterBag class is initialized, it creates a hash that stores the number of each letter that each player has
   def initialize(letters)
     @letters = letters
+
+    @letter_hash_pre = []
+    ("a".."z").each {|s| @letter_hash_pre.push(s)}
+
     @letter_hash = Hash.new(0)
+    @letter_hash_pre.each {|s| @letter_hash[s] = 0}
       if @letters != []
         @letters.each do |s|
           if @letter_hash.has_key?(s)
             @letter_hash[s] += 1
-          else
-            @letter_hash[s] = 1
           end
         end
       end 
@@ -48,9 +51,7 @@ class LetterBag
   def peel(new_letter)
     @letters.push(new_letter[0])
     if @letter_hash.has_key?(new_letter[0])
-      @letter_hash[2] += 1
-    else
-      @letter_hash[new_letter[0]] = 1
+      @letter_hash[new_letter[0]] += 1
     end
   end
 
@@ -76,74 +77,113 @@ class LetterBag
 
 end
 
-letter_pool_test = LetterBag.new($letter_pool)
+##Takes string as input
+#class Word
+#  attr_accessor :word
+#
+#  def initialize(word = [])
+#    @word = word
+#    @word_hash = Hash.new(0)
+#
+#    if @word != []
+#      @word.each_char do |s|
+##          puts "I'm making the hash"
+#          if @word_hash.has_key?(s)
+#            @word_hash[s] = @word_hash[s] + 1
+#          else
+#            @word_hash[s] = 1
+#          end  
+#      end
+##      puts "I've made the hash"
+#    end
+#  end
+#
+#  def hash
+#    return @word_hash
+#  end 
+#
+#  def show_hash
+#    @word_hash.each do |key, value|
+#      puts "#{key} is #{value}"
+#    end
+#  end
+#
+#end
+#
+letter_pool_bag = LetterBag.new($letter_pool)
+#
+#
+##puts "There are #{$letter_pool.length} letters in the pool."
+puts "There are #{letter_pool_bag.total} letters in the pool."
 
 
-puts "There are #{$letter_pool.length} letters in the pool."
-puts "There are #{letter_pool_test.total} letters in the pool."
+test_LB = LetterBag.new(letter_pool_bag.remove_letters(21))
 
-
-test_LB = LetterBag.new(letter_pool_test.remove_letters(21))
 puts "#{test_LB.letters}"
 puts ""
 
-puts "There are #{letter_pool_test.total} letters in the pool."
+puts "There are #{letter_pool_bag.total} letters in the pool."
+
 puts "I have #{test_LB.total} letters"
 puts "I have:"
 test_hash = test_LB.hash
 test_hash.each {|key, value| puts "#{value} #{key}'s"}
+puts ""
 
-test_LB.peel(letter_pool_test.remove_letters(1))
-puts "There are #{letter_pool_test.total} letters in the pool."
+test_LB.peel(letter_pool_bag.remove_letters(1))
+puts "There are #{letter_pool_bag.total} letters in the pool."
 puts "#{test_LB.letters}"
 puts "I have #{test_LB.total} letters"
 puts "I have:"
 test_hash = test_LB.hash
 test_hash.each {|key, value| puts "#{value} #{key}'s"}
-
-
-
-#test_word_arr = ["pillow","zzz", "zxx", "aabbccdd"]
+puts ""
 #
-#test_word_arr.each do |test_word|
-#  test_word = Word.new(test_word)
-#  puts "The word is " + test_word.word
-#  
-#  a = test_word.return_hash
-#  a.each do |key, value|
-#    if value == 1
-#    puts "There is #{value} #{key} in the word"
-#    else
-#    puts "There are #{value} #{key}'s in the word"
+#
+#player1_bag = LetterBag.new(letter_pool_bag.remove_letters(21))
+#
+##FIGURE OUT HOW TO EFFECTIVELY CHECK THAT player1_bag has all of the required letters in a given word.  Look at 
+##make_bananagrams_dictionary.rb for ideas
+#$check_break = []
+#
+#$dictionary.each do |element|
+#  @no_good = []
+#  dictionary_word = Word.new(element)
+##  dictionary_word_hash = dictionary_word.hash
+#  dictionary_word.hash.each do |key,value|
+#    if value > player1_bag.hash[key]   #Note, if player1_bag does not have certain letters, this comparison will not work
+#      @no_good = 1
+#      break
 #    end
+#      puts element
+#      puts player1_bag.letters
+#      #$check_break = 1
+#      break
+#    #end
 #  end
+#  
+# # if $check_break == 1
+# #   break
+# # end
 #end
-#if __FILE__ == $0
-#  wordTest = Word.new
-#  wordTest.show_string
 #
-#  wordTest.word = "pizza"
-#  wordTest.show_string
-#  wordTest.show_hash
-#end
-
-
-
-
-
-#Creates a hash of all the letters in the pool with their associated quantity
-$letters = Hash.new(0)
-
-$letter_pool.each do |letter|
-      if $letters.has_key?(  "#{ letter }")
-      	#puts "#{letter}"
-	$letters ["#{ letter }"]= $letters["#{ letter }"] + 1
-      else
-      	$letters ["#{ letter}"] = 1
-	#puts "#{letter}"
-	end
-end
-
-#$letters.each do |key, value| 
-#	puts "#{key} is #{value}"
-#end
+#
+#
+##puts $dictionary
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
