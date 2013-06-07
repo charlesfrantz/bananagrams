@@ -225,3 +225,15 @@ player1_bag.print_stored_words
 
 
 #Test playing 1st word, then 2nd word--NEXT SPIKE
+
+
+class Table
+
+  def initialize
+
+  end
+
+
+
+
+end
