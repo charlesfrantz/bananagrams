@@ -16,8 +16,6 @@ $letter_pool = []
 File.open("letters.txt") do |file|
   file.each_line { |line| $letter_pool.push line.strip }
 end
-#There is a "" at the end of $letter_pool, so we'll pop it off
-$letter_pool.pop
 #The letter_pool is shuffled so that players will get random letters from the pool
 #$letter_pool = $letter_pool.shuffle
 

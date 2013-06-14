@@ -1,33 +1,38 @@
 #!/usr/bin/ruby
 
-
-#RETRIEVE WORDS AND LETTERS FROM TXT FILES
-#=========================================
-
-#Defines the dictionary as an array of words from bananagrams_dictionary.txt
-$dictionary = []
-File.open("bananagrams_dictionary_caps.txt") do |file|
-  file.each_line { |line| $dictionary.push line.strip }
-end
-$dictionary.sort! { |left,right| right.length <=> left.length  }
-#puts $dictionary.length
-
-#Defines the pool of available letters in a bananagrams game
-$letter_pool = []
-File.open("letters.txt") do |file|
-  file.each_line { |line| $letter_pool.push line.strip }
-end
-#There is a "" at the end of $letter_pool, so we'll pop it off
-#$letter_pool.pop
-#The letter_pool is shuffled so that players will get random letters from the pool
-#$letter_pool = $letter_pool.shuffle
-
-
 #DEFINE CLASSES
 #==============
 
+#The Dictionary class is used to make our dictionary object.  It stores an array of strings, sorted ascending length 
+class Dictionary
+  attr_reader :dict_array, :dict_index
+  def initialize(filename)
+    
+    #upload words into @dict_array
+    @dict_array = []
+    File.open(filename) do |file|             
+      file.each_line { |line| @dict_array.push line.strip }
+    end
+    
+    #sort @dict_array by length, then alphabetically
+    @dict_array.sort_by!{|a| [a.length, a]}
+    #we now have an array of strings starting with 2-letter A words and ending with the longest word
 
-#The LetterBag class is used to keep track of how many letters each player has.  It takes an array as input.
+    #find the indices of @dict_array where a new word length section begins
+    @dict_index = Hash.new(0) 
+    max = 2
+    @dict_array.each do |word|
+      if word.length > max
+        max = word.length
+        @dict_index[word.length] = @dict_array.index(word)
+      end 
+    end
+    
+  end
+end
+
+
+#The LetterBag class is used to keep track of how many letters each player has.  It takes an array of strings of letters as input.
 #If an object of player's letters is initialized, the call should take the form obj = LetterBag.new($letter_pool.pop(21))
 #This will remove 21 letters from $letter_pool AND provide those same 21 letters to the player's LetterBag object
 class LetterBag
@@ -39,36 +44,20 @@ class LetterBag
     letters.each {|letter| @letter_hash[letter] += 1}
   end
 
-  #During a "Peel", a new letter is taken from the letter pool LetterBag.  It is added to the player's LetterBag object's array of letters and the hash is updated
+  #During a "Peel", a new letter is removed from the letter pool array.  It is added to the player's LetterBag object and the hash is updated
   def peel(new_letter)
-    @letters.push(new_letter[0])
-    if @letter_hash.has_key?(new_letter[0])
-      @letter_hash[new_letter[0]] += 1
-    end
+    @letter_hash[new_letter[0]] += 1
   end
 
-  #Used to remove letters from the pool LetterBag.  This method updates the letter_pool array and it's hash
-  def remove_letters(n)
-    @letters = @letters.shuffle
-    @letters_tobe_removed = @letters.pop(n)
-    return @letters_tobe_removed
-
-    @letters_tobe_removed.each do |s|
-      @letter_hash[s] -=1
-      @letters_tobe_removed.pop
-    end
+  def dump(dump_letter)
+    #return letter to beginning of $letter_pool
+    @letter_hash[dump_letter] -= 1
+    $letter_pool.insert(0,dump_letter)
+    #pop 3 from $letter_pool into player's bag
+    #shuffle letter_pool
   end
 
-  def hash
-    @letter_hash
-  end
-
-  def total
-    @letters.length
-  end
-
-
-  ###THIS NEXT SECTION NEEDS TO BE DEVELOPED A LOT
+  ###This method will be incorporated into make_word (6/12)
   def find_initial_word(player_bag)
     player_bag.clear_stored_words
     $dictionary.each do |element|
@@ -93,29 +82,19 @@ class LetterBag
     end
   end
 
-  #word_to_table is called by the store_word method in the Table class.  On the LetterBag's end, it just updates the @letter_hash
-  #so that the letters "on the table" are no longer in the player's bag.
-  def word_to_table(word)
+  def make_word(table)
+    #This method will make a the largest possible  word from the available letters in a player's LetterBag and the player's Table
+    #It will call the store_word method of the player's Table
+
+    table.store_word
+
     word.each_char do |char|
       @letter_hash[char] -= 1
     end 
   end
 
-  def clear_stored_words
-    @used_letters = []
-    @used_letter_hash.each_key {|key| @used_letter_hash[key] = 0}
-  end
-
-  def print_stored_words
-    print @used_letters
-    puts ""
-  end
-
-  def make_word
-    #This method will make a the largest possible  word from the available letters in a player's LetterBag and the player's Table
-  end
-
 end
+
 
 #TODOlist
 #Make Table class, each player will have a Table object
@@ -130,14 +109,15 @@ end
 
 class Table
   #This class is a 2D array.
-  attr_accessor :size  
+  #attr_accessor :size  
 
   def initialize
     #This should create a 2D array, filling in blank spaces with " "'s or some other space holding character
-    #I'm pretty sure we will want this array to always be square... as far as I can tell, Ruby arrays do not have to maintain dimensions the way linear algebra arrays do, so
-    #we should implement something that keeps the array square
+    #I'm pretty sure we will want this array to always be rectangular...
+    # as far as I can tell, Ruby arrays do not have to maintain dimensions the way linear algebra arrays do, so
+    #we should implement something that keeps the array rectangular 
     @table = [] 
-    @size = 0
+    #@size = 0
 
     #@words is an array of arrays of letters used to make each word on the table... I'm not sure if we need this, but it seems useful for making @table
     @words = []
@@ -201,14 +181,27 @@ class Word
 
 end
 
+#RETRIEVE WORDS AND LETTERS FROM TXT FILES
+#=========================================
+
+#Defines the pool of available letters in a bananagrams game.  This object will be kept as an array of strings.
+$letter_pool = []
+File.open("letters.txt") do |file|
+  file.each_line { |line| $letter_pool.push line.strip }
+end
+#The letter_pool is shuffled so that players will get random letters from the pool
+$letter_pool = $letter_pool.shuffle
+
+$dictionary = Dictionary.new("bananagrams_dictionary_caps.txt")
 
 
-letter_pool_bag = LetterBag.new($letter_pool)
-#puts "There are #{$letter_pool.length} letters in the pool."
-#puts "There are #{letter_pool_bag.total} letters in the pool."
+
+#TEST PROGRAM
+#========================================
 
 
-#test_LB = LetterBag.new(letter_pool_bag.remove_letters(21))
+
+test_LB = LetterBag.new(["B","A","T","S","K"])
 #
 #puts "#{test_LB.letters}"
 #puts ""

@@ -67,11 +67,11 @@ class LetterBag
   end
 
   def hash
-    return @letter_hash
+    @letter_hash
   end
 
   def total
-    return @letters.length
+    @letters.length
   end
 
 end
