@@ -39,14 +39,12 @@ class Word
 
     if @word != []
       @word.each_char do |s|
-#          puts "I'm making the hash"
           if @word_hash.has_key?(s)
             @word_hash[s] = @word_hash[s] + 1
           else
             @word_hash[s] = 1
           end  
       end
-#      puts "I've made the hash"
     end
   end
 
@@ -58,4 +56,5 @@ test_dict.dict_array[0..10].each do |x|
   x.word_hash.each {|k,v| puts "#{v} #{k}'s"}
   puts ""
 end
+
 
