@@ -54,7 +54,10 @@ class LetterBag
     @letter_hash[dump_letter] -= 1
     $letter_pool.insert(0,dump_letter)
     #pop 3 from $letter_pool into player's bag
+    new_letters = $letter_pool.pop(3)
+    new_letters.each {|letter| @letter_hash[letter] +=1}
     #shuffle letter_pool
+    $letter_pool.shuffle!
   end
 
   ###This method will be incorporated into make_word (6/12)
@@ -190,7 +193,7 @@ File.open("letters.txt") do |file|
   file.each_line { |line| $letter_pool.push line.strip }
 end
 #The letter_pool is shuffled so that players will get random letters from the pool
-$letter_pool = $letter_pool.shuffle
+$letter_pool = $letter_pool.shuffle!
 
 $dictionary = Dictionary.new("bananagrams_dictionary_caps.txt")
 
@@ -199,42 +202,43 @@ $dictionary = Dictionary.new("bananagrams_dictionary_caps.txt")
 #TEST PROGRAM
 #========================================
 
-
-
-test_LB = LetterBag.new(["B","A","T","S","K"])
-#
-#puts "#{test_LB.letters}"
+#testing peel and dump methods:
+#print $letter_pool.join
 #puts ""
+#puts $letter_pool.length
 #
-#puts "There are #{letter_pool_bag.total} letters in the pool."
-#
-#puts "I have #{test_LB.total} letters"
-#puts "I have:"
-#test_hash = test_LB.hash
-#test_hash.each {|key, value| puts "#{value} #{key}'s"}
+#test_LB = LetterBag.new($letter_pool.pop(21))
+#print $letter_pool.join
 #puts ""
+#puts $letter_pool.length
+#test_LB.letter_hash.each {|k,v| puts "There are #{v} #{k}'s"}
 #
-#test_LB.peel(letter_pool_bag.remove_letters(1))
-#puts "There are #{letter_pool_bag.total} letters in the pool."
-#puts "#{test_LB.letters}"
-#puts "I have #{test_LB.total} letters"
-#puts "I have:"
-#test_hash = test_LB.hash
-#test_hash.each {|key, value| puts "#{value} #{key}'s"}
+#test_LB.peel($letter_pool.pop)
+#print $letter_pool.join
 #puts ""
+#puts $letter_pool.length
+#test_LB.letter_hash.each {|k,v| puts "There are #{v} #{k}'s"}
+#
+#test_LB.dump(test_LB.letter_hash[test_LB.letter_hash.values.select{|num| num>0}[0]])
+#print $letter_pool.join
+#puts ""
+#puts $letter_pool.length
+#test_LB.letter_hash.each {|k,v| puts "There are #{v} #{k}'s"}
 
 
-player1_bag = LetterBag.new(letter_pool_bag.remove_letters(21))
-player1_words = []
-#FIGURE OUT HOW TO EFFECTIVELY CHECK THAT player1_bag has all of the required letters in a given word.  Look at 
-#make_bananagrams_dictionary.rb for ideas
 
-find_initial_word(player1_bag)
-#puts $dictionary
-player1_bag.print_stored_words
 
-player1_bag.peel(letter_pool_bag.remove_letters(1))
-
-find_initial_word(player1_bag)
-player1_bag.print_stored_words
-
+#player1_bag = LetterBag.new(letter_pool_bag.remove_letters(21))
+#player1_words = []
+##FIGURE OUT HOW TO EFFECTIVELY CHECK THAT player1_bag has all of the required letters in a given word.  Look at 
+##make_bananagrams_dictionary.rb for ideas
+#
+#find_initial_word(player1_bag)
+##puts $dictionary
+#player1_bag.print_stored_words
+#
+#player1_bag.peel(letter_pool_bag.remove_letters(1))
+#
+#find_initial_word(player1_bag)
+#player1_bag.print_stored_words
+#

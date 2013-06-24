@@ -147,8 +147,15 @@ class Table
     #run boggle_type check to ensure that all rules are being followed.  Perform this method each time  store_word is called.
   end
 
-  def print_table
-    @table.each {|array| print array.join<<"\n"}
+  def print_table(array2D)
+    array2D.each do |array|
+      array.each_index do |ind|
+        if array[ind] == nil
+          array[ind] = " "
+        end
+      end
+      print array.join<<"\n"
+    end
   end
 
   def store_word(word, bag)

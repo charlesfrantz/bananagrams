@@ -8,11 +8,11 @@ class Dictionary
     #upload words into @dict_array
     @dict_array = []
     File.open(filename) do |file|             
-      file.each_line { |line| @dict_array.push line.strip }
+      file.each_line { |line| @dict_array.push Word.new(line.strip) }
     end
     
     #sort @dict_array by length, then alphabetically
-    @dict_array.sort_by!{|a| [a.length, a]}
+    @dict_array.sort_by!{|a| [-a.length, a.word]}
     #we now have an array of strings starting with 2-letter A words and ending with the longest word
 
     #find the indices of @dict_array where a new word length section begins
@@ -28,14 +28,34 @@ class Dictionary
   end
 end
 
-test_dict = Dictionary.new("bananagrams_dictionary_caps.txt")
-#puts test_dict.dict_array[0..10000]
+class Word
+  attr_accessor :word
+  attr_reader :word_hash, :length
 
-test_dict.dict_index.each_value do |v|
-  puts test_dict.dict_array[v-1]
-  puts test_dict.dict_array[v]
-  puts test_dict.dict_array[v+1]
-  puts ""
+  def initialize(word = [])
+    @word = word
+    @length = word.length
+    @word_hash = Hash.new(0)
+
+    if @word != []
+      @word.each_char do |s|
+#          puts "I'm making the hash"
+          if @word_hash.has_key?(s)
+            @word_hash[s] = @word_hash[s] + 1
+          else
+            @word_hash[s] = 1
+          end  
+      end
+#      puts "I've made the hash"
+    end
+  end
+
 end
 
+test_dict = Dictionary.new("bananagrams_dictionary_caps.txt")
+test_dict.dict_array[0..10].each do |x|
+  print "#{x.word} has \n"
+  x.word_hash.each {|k,v| puts "#{v} #{k}'s"}
+  puts ""
+end
 
