@@ -1,87 +1,6 @@
 #!/usr/bin/ruby
-
-#CLASSES AND METHODS==================================================================
-#=====================================================================================
-class Dictionary
-  attr_reader :dict_array, :dict_index
-  def initialize(filename)
-    
-    #upload words into @dict_array
-    @dict_array = []
-    File.open(filename) do |file|             
-      file.each_line { |line| @dict_array.push line.strip }
-    end
-    
-    #sort @dict_array by length, then alphabetically
-    @dict_array.sort_by!{|a| [a.length, a]}
-    #we now have an array of strings starting with 2-letter A words and ending with the longest word
-
-    #find the indices of @dict_array where a new word length section begins
-    @dict_index = Hash.new(0) 
-    max = 2
-    @dict_array.each do |word|
-      if word.length > max
-        max = word.length
-        @dict_index[word.length] = @dict_array.index(word)
-      end 
-    end
-    
-  end
-end
-
-
-
-class BananaGraph
-  attr_reader :nodes, :xdim, :ydim
-
-  def initialize(board_arr)
-    @nodes = get_nodes(board_arr) #Might want to make nodes 2D...
-    @xdim = board_arr[0].length
-    @ydim = board_arr.length
-  end
-
-  private
-  def get_nodes(board_arr)
-    nodes = []
-    board_arr.each_index do |j|
-      board_arr[j].each_index do |i|
-        nodes.push BananaNode.new(i, j, board_arr[j][i])
-      end
-    end
-
-    nodes.each do |this|
-      ((this.x-1)..(this.x+1)).each do |x|
-        ((this.y-1)..(this.y+1)).each do |y|
-          unless x < 0 || x >= board_arr[0].length || y < 0 || y >= board_arr.length || (x==this.x && y==this.y) \
-          || (x==this.x-1 && y==this.y-1) || (x==this.x+1 && y==this.y+1)|| (x==this.x+1 && y==this.y-1) || (x==this.x-1 && y==this.y+1)
-            this.neighbors.push(nodes.find { |that| that.x == x && that.y == y })
-          end
-        end
-      end
-    end
-    
-    #remove nil neighbors--not sure we want to do this...
-    nodes.each do |node| 
-      node.neighbors.delete_if{|neighbor| neighbor.letter.nil?}
-    end
-  end
-end
-
-class BananaNode
-  attr_reader :x, :y, :letter
-  attr_accessor :neighbors
-
-  def initialize(x, y, letter, neighbors=[])
-    @x = x
-    @y = y
-    @letter = letter
-    @neighbors = neighbors
-  end
-
-  def to_s
-    "{#{self.letter}:[#{self.y},#{self.x}]}"
-  end
-end
+require "/Users/maxfrantz/Desktop/CS Files/GameSolvers/bananagrams/BananaGraph.rb"
+require "/Users/maxfrantz/Desktop/CS Files/GameSolvers/bananagrams/Dictionary.rb"
 
 def print_table(array2D)
   array2D.each do |array|
@@ -95,7 +14,7 @@ def print_table(array2D)
 end
 
 def word?(word)
-  !$dictionary.dict_array.find{|line| line == word}.nil?
+  !$dictionary.dict_array.find{|element| element.word == word}.nil?
 end
 
 
