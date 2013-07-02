@@ -1,6 +1,7 @@
 #!/usr/bin/ruby
 require "/Users/maxfrantz/Desktop/CS Files/GameSolvers/bananagrams/BananaGraph.rb"
 require "/Users/maxfrantz/Desktop/CS Files/GameSolvers/bananagrams/Dictionary.rb"
+require "/Users/maxfrantz/Desktop/CS Files/GameSolvers/bananagrams/check_table.rb"
 
 def print_table(array2D)
   array2D.each do |array|
@@ -11,66 +12,6 @@ def print_table(array2D)
     end
     print array.join<<"\n"
   end
-end
-
-def word?(word)
-  !$dictionary.dict_array.find{|element| element.word == word}.nil?
-end
-
-
-def check_table(graph)
-  #Retrieve would-be words from BananaGraph object. ...There has to be a better way to do this, maybe by storing the word somewhere in the 
-  #BananaGraph
-  @strings = Array.new
-  graph.nodes.each do |node|
-    word = String.new
-    unless node.letter.nil? 
-
-      #Get potential word in x direction
-      unless  !(node.neighbors.find{|neighbor| neighbor.x == node.x-1}.nil?) || node.x == graph.xdim-1
-        if !(node.neighbors.find{|neighbor| neighbor.x == node.x+1}.nil?)
-          graph.nodes.find_all{|potential_letter| node.y == potential_letter.y && node.x <= potential_letter.x}.each do |letter_node|
-            #puts "In x dir"
-            if letter_node.letter.nil?
-              break
-            end
-            word<<letter_node.letter
-          end
-          unless word == ""
-            @strings.push(word)
-            word = String.new
-          end
-        end
-      end
-      
-      #Get potential word in y direction
-      unless  !(node.neighbors.find{|neighbor| neighbor.y == node.y-1}.nil?) || node.y == graph.ydim-1
-        if !(node.neighbors.find{|neighbor| neighbor.y == node.y+1}.nil?)
-          graph.nodes.find_all{|potential_letter| node.x == potential_letter.x && node.y <= potential_letter.y}.each do |letter_node|
-          #puts "In y dir"
-            if letter_node.letter.nil?
-              break
-            end
-            word<<letter_node.letter
-          end
-          unless word == ""
-            @strings.push(word)
-            word = String.new
-          end
-        end
-      end
-
-    end
-  end
-
-  puts(@strings)
-  if !(@strings.find{ |word| !word?(word) }.nil?)
-    puts "This graph is invalid"
-  else
-    puts "This graph is valid"
-  end
-  puts ""
-
 end
 
 #TEST ARRAYS=====================================================
@@ -108,6 +49,19 @@ invalid_graph0 = BananaGraph.new(invalid0)
 invalid_graph1 = BananaGraph.new(invalid1)
 invalid_graph2 = BananaGraph.new(invalid2)
 invalid_graph3 = BananaGraph.new(invalid3)
+
+#Tests for updated BananaGraph and BananaNode classes
+#=================================
+#graph9.nodes.each do |node|
+#  puts node.neighbors
+#  puts ""
+#end
+#puts ""
+#graph1.nodes.each {|node| puts node}
+#puts ""
+#graph9.nodes.each {|node| puts node}
+
+
 
 #GRAPH TESTS================================
 $dictionary = Dictionary.new("bananagrams_dictionary_caps.txt")
