@@ -10,10 +10,9 @@ def check_table(graph)
     word = String.new
 
     #Get potential word in x direction
-    if node.neighbors.find{|neighbor| neighbor.x == node.x-1}.nil?
+    if node.neighbors.find{|neighbor| neighbor.x == node.x-1}.nil? #the node is not the beginning of a would-be word unless this condition and the following condition are met
       unless node.neighbors.find{|neighbor| neighbor.x == node.x+1}.nil?
         graph.nodes.find_all{|potential_letter| node.y == potential_letter.y && node.x <= potential_letter.x}.each do |letter_node|
-          #puts "In x dir"
           word<<letter_node.letter
           if letter_node.neighbors.find{|rhNeighbor| rhNeighbor.x == letter_node.x+1}.nil?
             break
@@ -30,7 +29,6 @@ def check_table(graph)
     if node.neighbors.find{|neighbor| neighbor.y == node.y-1}.nil?
       unless node.neighbors.find{|neighbor| neighbor.y == node.y+1}.nil?
         graph.nodes.find_all{|potential_letter| node.x == potential_letter.x && node.y <= potential_letter.y}.each do |letter_node|
-          #puts "In y dir"
           word<<letter_node.letter
           if letter_node.neighbors.find{|uNeighbor| uNeighbor.y == letter_node.y+1}.nil?
             break
@@ -45,7 +43,7 @@ def check_table(graph)
 
   end
 
-  puts "The would be words in this graph are: "
+  puts "The would-be words in this graph are: "
   puts(@strings)
   if !(@strings.find{ |word| !word?(word) }.nil?)
     puts "This graph is invalid"

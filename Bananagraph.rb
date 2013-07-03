@@ -11,6 +11,24 @@ class BananaGraph
     @nodes = get_nodes(board_arr) #Might want to make nodes 2D...
   end
 
+  def print_graph
+    for j in 0..@ydim
+      for i in 0..@xdim
+        if @nodes.find{|node| node.x == i && node.y == j }.nil? && i == @xdim
+          puts " "
+        elsif @nodes.find{|node| node.x == i && node.y == j }.nil? 
+          print " "
+        else
+          if i == @xdim
+            puts @nodes.find{|node| node.x == i && node.y == j}.letter
+          else
+            print @nodes.find{|node| node.x == i && node.y == j}.letter
+          end
+        end
+      end
+    end
+  end
+
   private
   def get_nodes(board_arr)
     nodes = []

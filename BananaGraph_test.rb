@@ -50,48 +50,56 @@ invalid_graph1 = BananaGraph.new(invalid1)
 invalid_graph2 = BananaGraph.new(invalid2)
 invalid_graph3 = BananaGraph.new(invalid3)
 
-#Tests for updated BananaGraph and BananaNode classes
-#=================================
-#graph9.nodes.each do |node|
-#  puts node.neighbors
-#  puts ""
-#end
-#puts ""
-#graph1.nodes.each {|node| puts node}
-#puts ""
-#graph9.nodes.each {|node| puts node}
-
-
 
 #GRAPH TESTS================================
 $dictionary = Dictionary.new("bananagrams_dictionary_caps.txt")
 
 puts "VALID GRAPHS"
 puts "0:"
+graph0.print_graph
 check_table(graph0)
 puts "1:"
-check_table(graph1a)
-puts "1a:"
+graph1.print_graph 
 check_table(graph1)
+puts "1a:"
+graph1a.print_graph #this is broken--prints A island--does not detect that graph is not singular--THIS MAY BE OKAY...
+check_table(graph1a)
 puts "2:"
+graph2.print_graph
 check_table(graph2)
 puts "3:"
+graph3.print_graph
 check_table(graph3)
 puts "4:"
+graph4.print_graph
 check_table(graph4)
 puts "5:"
+graph5.print_graph
 check_table(graph5)
 puts "6:"
+graph6.print_graph
 check_table(graph6)
 puts "7:"
+graph7.print_graph
 check_table(graph7)
 puts "8:"
-check_table(graph8)
+graph8.print_graph
+check_table(graph8) 
 puts "9:"
+graph9.print_graph
 check_table(graph9)
 
+puts "INVALID GRAPHS"
+puts "0:"
+invalid_graph0.print_graph
 check_table(invalid_graph0)
+puts "1:"
+invalid_graph1.print_graph
 check_table(invalid_graph1)
+puts "2:"
+invalid_graph2.print_graph 
 check_table(invalid_graph2)
+puts "3:"
+invalid_graph3.print_graph
 check_table(invalid_graph3)
 
