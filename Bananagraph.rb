@@ -45,13 +45,13 @@ class BananaGraph
       unless this.x-1 < 0
         this.neighbors.push(nodes.find { |that| that.x == this.x-1 && that.y == this.y}) unless nodes.find { |that| that.x == this.x-1 && that.y == this.y}.nil?
       end
-      unless this.x+1 >= self.xdim 
+      unless this.x+1 > self.xdim 
         this.neighbors.push(nodes.find { |that| that.x == this.x+1 && that.y == this.y }) unless nodes.find { |that| that.x == this.x+1 && that.y == this.y}.nil?
       end
       unless this.y-1 < 0
         this.neighbors.push(nodes.find { |that| that.x == this.x && that.y == this.y-1 }) unless nodes.find { |that| that.x == this.x && that.y == this.y-1}.nil?
       end
-      unless this.y+1 >= self.ydim
+      unless this.y+1 > self.ydim
         this.neighbors.push(nodes.find { |that| that.x == this.x && that.y == this.y+1 }) unless nodes.find { |that| that.x == this.x && that.y == this.y+1}.nil?
       end
     end
