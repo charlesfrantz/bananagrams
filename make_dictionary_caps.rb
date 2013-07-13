@@ -1,22 +1,16 @@
 #!/usr/bin/ruby
 
-
-
-
 #Defines the dictionary as an array of words from bananagrams_dictionary.txt
 $dictionary = []
-File.open("bananagrams_dictionary_caps.txt","w") do |outfile|
-  File.open("bananagrams_dictionary.txt","r") do |file|
+File.open("bananagrams_dictionary_caps_length_alphabetized.txt","w") do |outfile|
+  File.open("bananagrams_dictionary_caps.txt","r") do |file|
     file.each_line { |line| $dictionary.push line.strip }
 
-    $dictionary.sort! { |left,right| right.length <=> left.length  }
+    $dictionary.sort_by!{|a| [-a.length, a]}
 
     $dictionary.each do |word|
-       word.upcase!
        outfile.puts word
     end
- 
-
   end
 end
 #puts $dictionary.length
