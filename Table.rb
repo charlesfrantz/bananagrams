@@ -15,10 +15,10 @@ class Table
     for i in 0...DIMENSION
       for j in 0...DIMENSION
         node = @nodes[i][j]
-        node.north = j <= 0 ? nil : @nodes[i][j-1]
-        node.east = i >= DIMENSION - 1 ? nil : @nodes[i+1][j]
-        node.south = j >= DIMENSION - 1 ? nil : @nodes[i][j+1]
-        node.west = i <= 0 ? nil : @nodes[i-1][j]
+        node.neighbors[:north] = j <= 0 ? nil : @nodes[i][j-1]
+        node.neighbors[:east] = i >= DIMENSION - 1 ? nil : @nodes[i+1][j]
+        node.neighbors[:south] = j >= DIMENSION - 1 ? nil : @nodes[i][j+1]
+        node.neighbors[:west] = i <= 0 ? nil : @nodes[i-1][j]
       end
     end
     @middle = @nodes[DIMENSION/2][DIMENSION/2]

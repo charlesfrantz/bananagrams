@@ -3,16 +3,13 @@
 
 class BananaNode
   attr_reader :x, :y
-  attr_accessor :letter, :north, :east, :south, :west
+  attr_accessor :letter, :neighbors
 
-  def initialize(x, y, letter=nil, north=nil, east=nil, south=nil, west=nil)
+  def initialize(x, y, letter=nil, neighbors = {})
     @x = x
     @y = y
     @letter = letter
-    @north = north
-    @east = east
-    @south = south
-    @west = west
+    @neighbors = neighbors
   end
 
   def to_s
