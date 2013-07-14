@@ -1,5 +1,6 @@
 #!/usr/bin/ruby
 
+require_relative "./Word.rb"
 #The LetterBag class is used to keep track of how many letters each player has.  It takes an array of chars as input.
 #When an object of player's letters is initialized, the call should take the form obj = LetterBag.new($letter_pool.pop(21))
 #This will remove 21 letters from $letter_pool AND provide those same 21 letters to the player's LetterBag object
@@ -27,6 +28,14 @@ class LetterBag
     end
   end
 
+  def use(letter)
+    @letter_hash[letter] -= 1
+  end
+
+  def has?(letter)
+    @letter_hash[letter] >= 1
+  end
+
   #During a "Dump", one letter is removed from the player's letterbag and 3 letters are removed from the pool and added to the player's bag
   def dump(dump_letter) #tested 7/2
 
@@ -47,42 +56,21 @@ class LetterBag
     $letter_pool.shuffle!
   end
 
-  ###This method will be incorporated into make_word (6/12)
-  def find_initial_word(player_bag)
-    player_bag.clear_stored_words
-    $dictionary.each do |element|
-      @no_good = []
-      dictionary_word = Word.new(element)
-    
-      dictionary_word.hash.each do |key,value|
-        if value > player_bag.hash[key] 
-          @no_good = 1
-          break
-        end
-      end
-    
-      if @no_good == []
-        puts element
-        print player_bag.letters
-        puts ""
-        player_bag.store_word(element)
-        break
-      end
-    
+  def has_word?(word)
+    Word.new(word).word_hash.all? do |k,v|
+      v <= @letter_hash[k]
     end
   end
 
-  def make_word(table)
-    #This method will make a the largest possible  word from the available letters in a player's LetterBag and the player's Table
-    #It will call the store_word method of the player's Table
-
-    table.store_word
-
-    word.each_char do |char|
-      @letter_hash[char] -= 1
-    end 
+  def dup
+    copy = super
+    copy.letter_hash = @letter_hash.dup
+    copy
   end
 
+  def to_s
+    @letter_hash.to_s
+  end
 end
 
 
