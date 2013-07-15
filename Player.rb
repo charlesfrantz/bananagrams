@@ -13,14 +13,14 @@ class Player
 
   def initialize(pool)
     @table = Table.new
-    @dict = Dictionary.new("bananagrams_dictionary_caps.txt").dict_array
+    @dict = Dictionary.new("bananagrams_dictionary_caps.txt").dict_hash
     @bag = LetterBag.new(pool)
   end
 
   def play_word
     if table.middle.letter.nil?
       #play first letter of first word
-      @dict.find do |word|
+      @dict.keys.find do |word|
         if @bag.has_word?(word)
           char = word[0]
           @table.set_node(@table.middle, char)
@@ -28,7 +28,7 @@ class Player
         end
       end
     end
-    @dict.each do |word|
+    @dict.each_key do |word|
       @table.non_nil_nodes.each do |node|
         #puts "word:#{word} node:#{node} bag:#{@bag}"
         idxs = (0 .. word.length - 1).find_all { |i| word[i] == node.letter }
