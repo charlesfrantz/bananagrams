@@ -13,7 +13,7 @@ class Player
 
   def initialize(pool)
     @table = Table.new
-    @dict = Dictionary.new("bananagrams_dictionary_caps_small.txt").dict_array
+    @dict = Dictionary.new("bananagrams_dictionary_caps.txt").dict_array
     @bag = LetterBag.new(pool)
   end
 
