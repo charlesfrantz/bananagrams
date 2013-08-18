@@ -20,7 +20,7 @@ class LetterBag
   end
 
   #During a "Peel", a new letter is removed from the letter pool array.  It is added to the player's LetterBag object and the hash is updated
-  def peel(new_letter) #tested, though may want to not have an argument, just take from $letter_pool
+  def add(new_letter) #tested, though may want to not have an argument, just take from $letter_pool
     if @letter_hash.has_key?(new_letter)
       @letter_hash[new_letter] += 1
     else

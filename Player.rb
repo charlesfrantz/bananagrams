@@ -11,10 +11,11 @@ class Player
   VERT = Orientation.new(false)
   ORIENTATIONS = [HORIZ, VERT]
 
-  def initialize(pool)
+  def initialize(pool, dictionary)
     @table = Table.new
-    @dict = Dictionary.new("bananagrams_dictionary_caps.txt").dict_hash
-    @bag = LetterBag.new(pool)
+    @dict = Dictionary.new(dictionary).dict_hash
+    @bag = LetterBag.new(pool.pop(21))
+    @pool = pool
   end
 
   def play_word
@@ -47,8 +48,11 @@ class Player
     return false
   end
 
-  private
+  def peel
+    @bag.add @pool.pop
+  end
 
+  private
 
   def try_to_build(node, word, idx, orientation)
     prefix = word[0...idx]
@@ -65,7 +69,7 @@ class Player
       return false
     end
     word = [prefix, node.letter, suffix].join
-    if (!@dict.include?(word))
+    if (conflict?(node, node.letter, orientation))
       #puts "#{word} is not a word"
       return false
     end
@@ -98,6 +102,9 @@ class Player
         uses_bag_letter = true
       end
       node = node.neighbors[orientation.directions[direction]]
+    end
+    if (conflict?(node, segmentchars.last, orientation))
+      return nil
     end
     return segment
   end
