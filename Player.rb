@@ -34,9 +34,6 @@ class Player
       @table.non_nil_nodes.each do |node|
         #puts "word:#{word} node:#{node} bag:#{@bag}"
         idxs = (0 .. word.length - 1).find_all { |i| word[i] == node.letter }
-        if (idxs.empty?)
-          #puts "node letter #{node.letter} not in word #{word}"
-        end
         idxs.each do |idx|
           ORIENTATIONS.each do |orientation|
             if (try_to_build(node, word, idx, orientation))
@@ -47,13 +44,13 @@ class Player
       end
     end
     # Couldn't play a word
-    #dump
-    #play_word
+    dump
+    play_word
   end
 
   def peel
     letter = @pool.pop
-    #puts "PEELED! Got '#{letter}'"
+    puts "PEELED! Got '#{letter}'"
     @bag.add letter
   end
 
@@ -62,7 +59,7 @@ class Player
     @pool.push(letter).shuffle!
     letters = @pool.pop(3)
     letters.each {|letter| @bag.add letter}
-    #puts "DUMPED! '#{letter}' for '#{letters.join(',')}'"
+    puts "DUMPED! '#{letter}' for '#{letters.join(',')}'"
   end
 
   private
@@ -71,27 +68,27 @@ class Player
     prefix = word[0...idx]
     suffix = word[idx+1...word.length]
     bag_copy = @bag.dup
-    prefix = build?(node.neighbors[orientation.directions[:backward]], prefix, bag_copy, orientation, :backward)
-    if (prefix.nil?)
+    extended_prefix = build?(node.neighbors[orientation.directions[:backward]], prefix, bag_copy, orientation, :backward)
+    if (extended_prefix.nil?)
       #puts "prefix is nil"
       return false
     end
-    suffix = build?(node.neighbors[orientation.directions[:forward]], suffix, bag_copy, orientation, :forward)
-    if (suffix.nil?)
+    extended_suffix = build?(node.neighbors[orientation.directions[:forward]], suffix, bag_copy, orientation, :forward)
+    if (extended_suffix.nil?)
       #puts "suffix is nil"
       return false
     end
-    word = [prefix, node.letter, suffix].join
-    if (conflict?(node, node.letter, orientation))
-      #puts "#{word} is not a word"
-      return false
-    end
+
     if (bag_copy.letter_hash.eql? @bag.letter_hash)
-      #puts "doesn't use bag letter"
       return false
     end
-    #puts "bag_copy: #{bag_copy}"
-    #puts "bag     : #{@bag}"
+
+    extended_word = [extended_prefix, node.letter, extended_suffix].join
+    unless @dict.include?(extended_word)
+      puts "tried to play #{word} but ended up with #{extended_word}"
+      return false
+    end
+
     build(node, prefix, suffix, orientation)
   end
 
@@ -112,16 +109,14 @@ class Player
       end
       node = node.neighbors[orientation.directions[direction]]
     end
-    if (!node.letter.nil?)
-      #puts "edge case encountered"
-    end
-    if (conflict?(node, segmentchars.last, orientation))
-      return nil
-    end
-    return segment
+    extension = find_segment(node, orientation, direction)
+    return (direction == :backward) ? extension + segment : segment + extension
   end
 
   def conflict?(node, char, orientation)
+    if node.letter == char
+      return false
+    end
     node = node.clone
     node.letter = char
     word = find_word(node, orientation)
@@ -132,18 +127,22 @@ class Player
   end
 
   def find_word(node, orientation)
-    prefix = find_segment(node, orientation, :backward)
-    suffix = find_segment(node, orientation, :forward)
+    prefix = find_segment(node.neighbors[orientation.directions[:backward]], orientation, :backward)
+    suffix = find_segment(node.neighbors[orientation.directions[:forward]], orientation, :forward)
     [prefix, node.letter, suffix].join
   end
 
-  def find_segment(node, orientation, direction)
-    node = node.neighbors[orientation.directions[direction]]
+  def find_segment_helper(node, orientation, direction)
     if (node.nil? || node.letter.nil?)
       return ""
     else
-      return node.letter + find_segment(node, orientation, direction)
+      return node.letter + find_segment_helper(node.neighbors[orientation.directions[direction]], orientation, direction)
     end
+  end
+
+  def find_segment(node, orientation, direction)
+    segment = find_segment_helper(node, orientation, direction)
+    return (direction == :backward) ? segment.reverse : segment
   end
 
   def build(node, prefix, suffix, orientation)
@@ -163,5 +162,8 @@ class Player
       end
       for_node = for_node.neighbors[orientation.directions[:forward]]
     end
+  end
+
+  def fakebuild()
   end
 end
