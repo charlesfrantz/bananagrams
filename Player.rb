@@ -11,14 +11,15 @@ class Player
   VERT = Orientation.new(false)
   ORIENTATIONS = [HORIZ, VERT]
 
-  def initialize(pool, dictionary)
-    @table = Table.new
-    @dict = Dictionary.new(dictionary).dict_hash
-    @bag = LetterBag.new(pool.pop(21))
+  def initialize(pool, dictionary, table = Table.new, bagLetters=nil)
     @pool = pool
+    @dict = Dictionary.new(dictionary).dict_hash
+    @table = table
+    @bag = LetterBag.new(bagLetters.nil? ? pool.pop(21) : bagLetters)
   end
 
   def play_word
+    peel if @bag.empty?
     if table.middle.letter.nil?
       #play first letter of first word
       @dict.keys.find do |word|
@@ -39,17 +40,29 @@ class Player
         idxs.each do |idx|
           ORIENTATIONS.each do |orientation|
             if (try_to_build(node, word, idx, orientation))
-              return true
+              return word
             end
           end
         end
       end
     end
-    return false
+    # Couldn't play a word
+    #dump
+    #play_word
   end
 
   def peel
-    @bag.add @pool.pop
+    letter = @pool.pop
+    #puts "PEELED! Got '#{letter}'"
+    @bag.add letter
+  end
+
+  def dump
+    letter = @bag.pop
+    @pool.push(letter).shuffle!
+    letters = @pool.pop(3)
+    letters.each {|letter| @bag.add letter}
+    #puts "DUMPED! '#{letter}' for '#{letters.join(',')}'"
   end
 
   private
@@ -89,19 +102,18 @@ class Player
       #puts "#{node.letter} != #{char}: #{node.letter != char}"
       #puts "!#{bag}.has?(#{char}): #{!bag.has?(char)}"
       if ((!node.letter.nil? && node.letter != char) || (node.letter.nil? && !bag.has?(char)))
-        #puts "first build? condition failed"
         return nil
       end
       if (conflict?(node, char, ORIENTATIONS.find {|ori| ori != orientation} ))
-        #puts "build? conflict"
         return nil
       end
       unless node.letter == char
         bag.use char
-        #puts "setting uses_bag_letter to true"
-        uses_bag_letter = true
       end
       node = node.neighbors[orientation.directions[direction]]
+    end
+    if (!node.letter.nil?)
+      #puts "edge case encountered"
     end
     if (conflict?(node, segmentchars.last, orientation))
       return nil
@@ -126,10 +138,11 @@ class Player
   end
 
   def find_segment(node, orientation, direction)
-    if (node.neighbors[orientation.directions[direction]].letter.nil?)
+    node = node.neighbors[orientation.directions[direction]]
+    if (node.nil? || node.letter.nil?)
       return ""
     else
-      return node.neighbors[orientation.directions[direction]].letter + find_segment(node.neighbors[orientation.directions[direction]], orientation, direction)
+      return node.letter + find_segment(node, orientation, direction)
     end
   end
 

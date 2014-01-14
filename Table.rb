@@ -4,25 +4,26 @@ require_relative "./BananaNode.rb"
 
 class Table
   attr_reader :middle, :non_nil_nodes
-  DIMENSION = 286
-  def initialize
-    @nodes = Array.new(DIMENSION) { Array.new(DIMENSION) }
-    for i in 0...DIMENSION
-      for j in 0...DIMENSION
+  def initialize(matrix = Array.new(286) { Array.new(286) })
+    @nodes = Array.new(matrix.size) {Array.new(matrix.size)}
+    @non_nil_nodes = []
+    for i in 0...@nodes.size
+      for j in 0...@nodes.size
+        letter = matrix[i][j]
         @nodes[i][j] = BananaNode.new(i, j)
+        set_node(@nodes[i][j], letter)
       end
     end
-    for i in 0...DIMENSION
-      for j in 0...DIMENSION
+    for i in 0...@nodes.size
+      for j in 0...@nodes.size
         node = @nodes[i][j]
         node.neighbors[:north] = j <= 0 ? nil : @nodes[i][j-1]
-        node.neighbors[:east] = i >= DIMENSION - 1 ? nil : @nodes[i+1][j]
-        node.neighbors[:south] = j >= DIMENSION - 1 ? nil : @nodes[i][j+1]
+        node.neighbors[:east] = i >= @nodes.size - 1 ? nil : @nodes[i+1][j]
+        node.neighbors[:south] = j >= @nodes.size - 1 ? nil : @nodes[i][j+1]
         node.neighbors[:west] = i <= 0 ? nil : @nodes[i-1][j]
       end
     end
-    @middle = @nodes[DIMENSION/2][DIMENSION/2]
-    @non_nil_nodes = []
+    @middle = @nodes[@nodes.size/2][@nodes.size/2]
   end
 
   def set_node(node, letter)
@@ -34,7 +35,8 @@ class Table
     end
   end
 
-  def print_graph
+  def inspect
+    arr = []
     minx = @non_nil_nodes.min{|node1,node2| node1.x <=> node2.x}.x
     maxx = @non_nil_nodes.max{|node1,node2| node1.x <=> node2.x}.x
     miny = @non_nil_nodes.min{|node1,node2| node1.y <=> node2.y}.y
@@ -43,10 +45,14 @@ class Table
     for y in miny..maxy
       for x in minx..maxx
         col = @nodes[x][y]
-        print col.letter.nil? ? " " : col.letter
+        arr.push col.letter.nil? ? ' ' : col.letter
       end
-      puts
+      arr.push("\n")
     end
+    arr.join('')
   end
 
+  def print_graph
+    puts inspect
+  end
 end

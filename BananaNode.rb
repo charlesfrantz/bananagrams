@@ -1,6 +1,5 @@
 #!/usr/bin/ruby
 
-
 class BananaNode
   attr_reader :x, :y
   attr_accessor :letter, :neighbors
